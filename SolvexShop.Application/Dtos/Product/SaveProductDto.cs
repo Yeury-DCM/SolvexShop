@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SolvexShop.Core.Domain.Enum
+namespace SolvexShop.Core.Application.Dtos.Product
 {
-    public enum VariationType
+    internal class SaveProductDto
     {
-        Color
-       
     }
 }

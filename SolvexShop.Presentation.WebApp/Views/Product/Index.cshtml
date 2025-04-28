@@ -1,0 +1,158 @@
+﻿@using SolvexShop.Core.Application.ViewModels.Products
+@model IEnumerable<ProductViewModel>
+@{
+    ViewData["Title"] = "Catálogo de Productos";
+    int pageSize = 3;
+    int currentPage = ViewBag.CurrentPage != null ? ViewBag.CurrentPage : 1;
+    int totalPages = (int)Math.Ceiling((double)Model.Count() / pageSize);
+    var paginatedProducts = Model.Skip((currentPage - 1) * pageSize).Take(pageSize);
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Catálogo de Productos</h1>
+        <a asp-action="Add" asp-controller="Product" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nuevo Producto
+        </a>
+    </div>
+
+    @foreach (var product in paginatedProducts)
+    {
+        <div class="mb-5 pb-4 border-bottom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h3 mb-0">@product.Name</h2>
+                <div class="btn-group">
+                    <a asp-action="Edit" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a asp-action="AddVariation" asp-controller="Product" asp-route-productId="@product.Id" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-plus-circle"></i> Añadir Variación
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal-@product.Id">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @if (product.ProductVariations != null && product.ProductVariations.Count() != 0)
+                {
+                    @foreach (var variation in product.ProductVariations)
+                    {
+                        <div class="col">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(variation.ImagePath))
+                                {
+                                    <img src="@variation.ImagePath" class="card-img-top" alt="@product.Name - @variation.Value" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <span class="text-muted">Sin imagen</span>
+                                    </div>
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@variation.Value</h5>
+                                    <p class="card-text text-muted small">@variation.Description</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="fw-bold fs-5">@variation.Price.ToString("C")</span>
+                                        <span class="badge bg-secondary">@variation.Type.ToString()</span>
+                                    </div>
+
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <div class="d-flex justify-content-between">
+                                        <a asp-action="EditVariation" asp-controller="Product" asp-route-productId="@product.Id" asp-route-variationValue="@variation.Value" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariationModal-@product.Id-@variation.Value.Replace(" ", "-")">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+        <!-- Modal para eliminar producto -->
+        <div class="modal fade" id="deleteProductModal-@product.Id" tabindex="-1" aria-labelledby="deleteProductModalLabel-@product.Id" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteProductModalLabel-@product.Id">Confirmar eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de que desea eliminar el producto "@product.Name"? Esta acción no se puede deshacer.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form asp-action="Delete" asp-controller="Product" asp-route-id="@product.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (product.ProductVariations != null && product.ProductVariations.Count() != 0)
+        {
+            <!-- Modales para eliminar variaciones -->
+            @foreach (var variation in product.ProductVariations)
+            {
+                <div class="modal fade" id="deleteVariationModal-@product.Id-@variation.Value.Replace(" ", "-")" tabindex="-1" aria-labelledby="deleteVariationModalLabel-@product.Id-@variation.Value.Replace(" ", "-")" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteVariationModalLabel-@product.Id-@variation.Value.Replace(" ", "-")">Confirmar eliminación</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                ¿Está seguro de que desea eliminar la variación "@variation.Value" del producto "@product.Name"? Esta acción no se puede deshacer.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <form asp-action="DeleteVariation" asp-controller="Product" asp-route-productId="@product.Id" asp-route-variationValue="@variation.Value" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    }
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Navegación de productos">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-page="@(currentPage - 1)" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-page="@i">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-page="@(currentPage + 1)" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
