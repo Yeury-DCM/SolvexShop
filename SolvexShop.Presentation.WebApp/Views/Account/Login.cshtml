@@ -16,23 +16,23 @@
                             </div>
                         }
                         <div class="text-center mb-4">
-                            <h1 class="display-5 fw-bold mb-3">Internet Banking</h1>
+                            <h1 class="display-5 fw-bold mb-3">Solvex Shop</h1>
                             <h5 class="fw-bold text-secondary">INICIA SESIÓN</h5>
                         </div>
                         <form asp-action="LogIn" asp-controller="Account">
-                            <!-- Nombre de usuario -->
+                            
                             <div class="form-group mb-3">
                                 <label asp-for="UserName" class="form-label">Nombre de usuario</label>
                                 <input asp-for="UserName" type="text" class="form-control form-control-lg" style="background-color: #ffffff; color: #333; border: 1px solid #ced4da;">
                                 <span asp-validation-for="UserName" class="text-danger"></span>
                             </div>
-                            <!-- Contraseña -->
+                            
                             <div class="form-group mb-3">
                                 <label asp-for="Password" class="form-label">Contraseña</label>
                                 <input asp-for="Password" type="password" class="form-control form-control-lg" style="background-color: #ffffff; color: #333; border: 1px solid #ced4da;">
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
-                            <!-- Botón de Login -->
+                            
                             <div class="d-grid">
                                 <button class="btn btn-info text-white" type="submit">
                                     Login
