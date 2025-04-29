@@ -67,6 +67,8 @@ namespace SolvexShop.Core.Application.Mapping
             #endregion
 
             #region ProductVariations
+            CreateMap<ProductVariation, ProductVariation>();
+
             CreateMap<ProductVariation, ProductVariationDto>()
            .ReverseMap();
             CreateMap<ProductVariation, SaveProductVariationDto>()

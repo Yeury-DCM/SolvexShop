@@ -47,6 +47,11 @@ namespace SolvexShop.Infrastructure.Persistence.Contexts
             modelBuilder.Entity<Product>().Navigation(p => p.ProductVariations).AutoInclude();
             #endregion
 
+            #region Query Filter
+            modelBuilder.Entity<ProductVariation>().HasQueryFilter(pv => !pv.IsDeleted);
+            modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
+            #endregion
+
 
         }
 

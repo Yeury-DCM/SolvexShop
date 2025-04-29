@@ -21,7 +21,7 @@
         </div>
 
         <div class="card-body">
-            <form method="post">
+            <form method="post" asp-controller="product" asp-action="@(!editMode ? "AddProductVariation" : "EditProductVariation")">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ProductId" />
 

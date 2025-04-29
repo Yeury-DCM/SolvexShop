@@ -6,6 +6,7 @@ using SolvexShop.Core.Application.Features.Products.Commands.CreateProduct;
 using SolvexShop.Core.Application.Features.Products.Queries.GetAll;
 using SolvexShop.Core.Application.Features.Products.Queries.GetById;
 using SolvexShop.Core.Application.Features.ProductVariations.Commands.CreateProductVariations;
+using SolvexShop.Core.Application.Features.ProductVariations.Queries.GetById;
 using SolvexShop.Core.Application.ViewModels.Products;
 using SolvexShop.Core.Application.ViewModels.ProductVariations;
 
@@ -54,7 +55,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
 
             }
 
-            return View("SaveProduct");
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(string Id)
@@ -110,7 +111,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
 
        
 
-        public async Task<IActionResult> AddVariation(string productId)
+        public async Task<IActionResult> AddProductVariation(string productId)
         {
             var defaultViewModel = new SaveProductVariationViewModel() { ProductId = Guid.Parse(productId) };
 
@@ -123,7 +124,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddVariation(SaveProductVariationViewModel saveProductVariationViewModel)
+        public async Task<IActionResult> AddProductVariation(SaveProductVariationViewModel saveProductVariationViewModel)
         {
             var product = (await _mediator.Send(new GetProductByIdQuery() { Id = saveProductVariationViewModel.ProductId})).Data;
 
@@ -145,9 +146,57 @@ namespace SolvexShop.Presentation.WebApp.Controllers
                 return View("SaveProduct", saveProductVariationViewModel);
 
             }
+            
+            return RedirectToAction("Index");
+        }
 
-       
+        public async Task<IActionResult> EditProductVariation(string Id)
+        {
+            var response = (await _mediator.Send(new GetProductVariationByIdQuery() { Id = Guid.Parse(Id) }));
 
+            if (!response.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var saveProductVariationViewModel = _mapper.Map<SaveProductVariationViewModel>(response.Data);
+            return View("SaveProductVariation", saveProductVariationViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProductVariation(SaveProductVariationViewModel saveProductVariationViewModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View("SaveProductVariation", saveProductVariationViewModel);
+            }
+
+            var updateProductVariationCommand = _mapper.Map<UpdateProductVariationCommand>(saveProductVariationViewModel);
+            var response = await mediator.Send(updateProductVariationCommand);
+
+
+            if (!response.IsSuccess)
+            {
+                ViewBag.ErrorMessage = response.Message;
+                ViewBag.HasError = true;
+                return View("SaveProductVariation", saveProductVariationViewModel);
+
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+
+        public async Task<IActionResult> DeleteProductVariation(string Id)
+        {
+            var response = (await _mediator.Send(new DeleteProductVariationByIdCommand() { Id = Guid.Parse(Id) }));
+
+            if (!response.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
 
             return RedirectToAction("Index");
         }

@@ -25,7 +25,7 @@
                     <a asp-action="Edit" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-pencil"></i> Editar
                     </a>
-                    <a asp-action="AddVariation" asp-controller="Product" asp-route-productId="@product.Id" class="btn btn-sm btn-outline-success">
+                    <a asp-action="AddProductVariation" asp-controller="Product" asp-route-productId="@product.Id" class="btn btn-sm btn-outline-success">
                         <i class="bi bi-plus-circle"></i> Añadir Variación
                     </a>
                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal-@product.Id">
@@ -43,29 +43,29 @@
                             <div class="card h-100">
                                 @if (!string.IsNullOrEmpty(variation.ImagePath))
                                 {
-                                    <img src="@variation.ImagePath" class="card-img-top" alt="@product.Name - @variation.Value" style="height: 200px; object-fit: cover;">
+                                    <img src="@variation.ImagePath" class="card-img-top" alt="@product.Name - @variation.Value" style="height: 300px; object-fit: cover; aspect-ratio: 3/4;">
                                 }
                                 else
                                 {
-                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px; aspect-ratio: 3/4;">
                                         <span class="text-muted">Sin imagen</span>
                                     </div>
                                 }
                                 <div class="card-body">
-                                    <h5 class="card-title">@variation.Value</h5>
+                                    <h5 class="card-title">@variation.Type.ToString(): @variation.Value</h5>
                                     <p class="card-text text-muted small">@variation.Description</p>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <span class="fw-bold fs-5">@variation.Price.ToString("C")</span>
-                                        <span class="badge bg-secondary">@variation.Type.ToString()</span>
+                                        <span class="fw-bold fs-5">RD$ @variation.Price.ToString()</span>
+
                                     </div>
 
                                 </div>
                                 <div class="card-footer bg-white border-top-0">
                                     <div class="d-flex justify-content-between">
-                                        <a asp-action="EditVariation" asp-controller="Product" asp-route-productId="@product.Id" asp-route-variationValue="@variation.Value" class="btn btn-sm btn-outline-primary">
+                                        <a asp-action="EditProductVariation" asp-controller="Product" asp-route-Id="@variation.Id" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-pencil"></i> Editar
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariationModal-@product.Id-@variation.Value.Replace(" ", "-")">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariationModal-@variation.Id">
                                             <i class="bi bi-trash"></i> Eliminar
                                         </button>
                                     </div>
@@ -105,11 +105,11 @@
             <!-- Modales para eliminar variaciones -->
             @foreach (var variation in product.ProductVariations)
             {
-                <div class="modal fade" id="deleteVariationModal-@product.Id-@variation.Value.Replace(" ", "-")" tabindex="-1" aria-labelledby="deleteVariationModalLabel-@product.Id-@variation.Value.Replace(" ", "-")" aria-hidden="true">
+                <div class="modal fade" id="deleteVariationModal-@variation.Id" tabindex="-1" aria-labelledby="deleteVariationModalLabel-@variation.Id" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="deleteVariationModalLabel-@product.Id-@variation.Value.Replace(" ", "-")">Confirmar eliminación</h5>
+                                <h5 class="modal-title" id="deleteVariationModalLabel-@variation.Id">Confirmar eliminación</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -117,7 +117,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <form asp-action="DeleteVariation" asp-controller="Product" asp-route-productId="@product.Id" asp-route-variationValue="@variation.Value" method="post">
+                                <form asp-action="DeleteProductVariation" asp-controller="Product" asp-route-id="@variation.Id" method="post">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-danger">Eliminar</button>
                                 </form>
