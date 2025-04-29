@@ -4,6 +4,7 @@ This is a technical test by Solvex Dominicana that involves creating a Web App u
 #### For admin user
 
 username: adminUser
+
 password: 1234
 
 #### For seller user
