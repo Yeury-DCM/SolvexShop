@@ -1,4 +1,4 @@
-﻿namespace InternetBanking.Core.Application.Dtos
+﻿namespace SolvexShop.Core.Application.Dtos
 {
     public class AuthenticationRequest
     {

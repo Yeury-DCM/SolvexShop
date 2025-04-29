@@ -12,8 +12,15 @@ builder.Services.AddControllersWithViews();
  builder.Services.AddIdentityLayer(builder.Configuration);
 builder.Services.ApplicationLayerGenericConfiguration();
 builder.Services.AddApplicationLayer();
+builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
+
 
 var app = builder.Build();
+
+//Seed default users
+await app.Services.RunSeedAsync(builder.Configuration);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -26,14 +33,17 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+
 app.UseAuthorization();
 
+app.UseSession();
+app.UseRouting();
 
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
 
 

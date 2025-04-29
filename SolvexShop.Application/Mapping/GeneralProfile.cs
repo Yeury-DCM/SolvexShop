@@ -1,11 +1,14 @@
 ﻿
 using AutoMapper;
+using SolvexShop.Core.Application.Dtos;
 using SolvexShop.Core.Application.Dtos.Product;
 using SolvexShop.Core.Application.Dtos.ProductVariation;
+using SolvexShop.Core.Application.Dtos.User;
 using SolvexShop.Core.Application.Features.Products.Commands.CreateProduct;
 using SolvexShop.Core.Application.Features.ProductVariations.Commands.CreateProductVariations;
 using SolvexShop.Core.Application.ViewModels.Products;
 using SolvexShop.Core.Application.ViewModels.ProductVariations;
+using SolvexShop.Core.Application.ViewModels.Users;
 using SolvexShop.Core.Domain.Entities;
 using System.Security;
 
@@ -79,6 +82,32 @@ namespace SolvexShop.Core.Application.Mapping
             CreateMap<ProductVariationDto, SaveProductVariationViewModel>()
             .ReverseMap();
             #endregion
+
+            #region Users
+           
+
+            CreateMap<UserDto, UserViewModel>()
+            .ReverseMap();
+            CreateMap<SaveUserDto, SaveUserViewModel>()
+                .ForMember(dest =>dest.UserType, opt => opt.MapFrom(src => src.Role.ToString()))
+            .ReverseMap()
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.UserType.ToString()));
+
+
+            CreateMap<UserDto, SaveUserViewModel>()
+            .ReverseMap();
+            #endregion
+
+            #region Account
+            CreateMap<SaveUserRequest, SaveUserViewModel>()
+                .ReverseMap();
+
+            #endregion
+
+
+
+
+
             #endregion
         }
     }

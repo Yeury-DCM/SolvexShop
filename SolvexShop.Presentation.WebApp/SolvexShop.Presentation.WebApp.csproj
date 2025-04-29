@@ -21,8 +21,4 @@
     <ProjectReference Include="..\SolvexShop.Infrastructure.Persistence\SolvexShop.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\ProductVariation\" />
-  </ItemGroup>
-
 </Project>

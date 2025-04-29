@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolvexShop.Core.Application.Dtos.ProductVariation;
 using SolvexShop.Core.Application.Features.Products.Commands.CreateProduct;
@@ -13,10 +14,14 @@ using SolvexShop.Core.Application.ViewModels.ProductVariations;
 
 namespace SolvexShop.Presentation.WebApp.Controllers
 {
+    [Authorize]
     public class ProductController(IMediator mediator, IMapper mapper) : Controller
     {
         private IMapper _mapper = mapper;
         private IMediator _mediator = mediator;
+
+
+        [Authorize(Roles = "Admin, Seller, User")]
         public async Task<IActionResult> Index(int page = 1)
         {
             var products = await _mediator.Send(new GetAllPRoductsQuery());
@@ -28,12 +33,14 @@ namespace SolvexShop.Presentation.WebApp.Controllers
         }
 
 
+        [Authorize(Roles = "Admin, Seller")]
         public async Task<IActionResult> Add()
         {
             var defaultViewModel = new SaveProductViewModel() { Id = Guid.Empty };
             return View("SaveProduct", defaultViewModel);
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         [HttpPost]
         public async Task<IActionResult> Add(SaveProductViewModel saveProductViewModel)
         {
@@ -58,6 +65,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         public async Task<IActionResult> Edit(string Id)
         {
             var response = (await _mediator.Send(new GetProductByIdQuery() { Id = Guid.Parse(Id) }));
@@ -71,6 +79,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return View("SaveProduct", saveProductViewModel);
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         [HttpPost]
         public async Task<IActionResult> Edit(SaveProductViewModel saveProductViewModel)
         {
@@ -96,7 +105,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string Id)
         {
             var response = (await _mediator.Send(new DeleteProductByIdCommand(){ Id = Guid.Parse(Id) }));
@@ -109,8 +118,8 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
-       
 
+        [Authorize(Roles = "Admin, Seller")]
         public async Task<IActionResult> AddProductVariation(string productId)
         {
             var defaultViewModel = new SaveProductVariationViewModel() { ProductId = Guid.Parse(productId) };
@@ -123,6 +132,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return View("SaveProductVariation", defaultViewModel);
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         [HttpPost]
         public async Task<IActionResult> AddProductVariation(SaveProductVariationViewModel saveProductVariationViewModel)
         {
@@ -150,6 +160,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         public async Task<IActionResult> EditProductVariation(string Id)
         {
             var response = (await _mediator.Send(new GetProductVariationByIdQuery() { Id = Guid.Parse(Id) }));
@@ -163,6 +174,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
             return View("SaveProductVariation", saveProductVariationViewModel);
         }
 
+        [Authorize(Roles = "Admin, Seller")]
         [HttpPost]
         public async Task<IActionResult> EditProductVariation(SaveProductVariationViewModel saveProductVariationViewModel)
         {
@@ -188,7 +200,7 @@ namespace SolvexShop.Presentation.WebApp.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductVariation(string Id)
         {
             var response = (await _mediator.Send(new DeleteProductVariationByIdCommand() { Id = Guid.Parse(Id) }));
