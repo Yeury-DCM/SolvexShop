@@ -1,6 +1,0 @@
-@SolvexShop.Presentation.WebApi_HostAddress = http://localhost:5186
-
-GET {{SolvexShop.Presentation.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
